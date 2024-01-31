@@ -1,21 +1,25 @@
-const http = require("http");
-const fs = require("fs");
+// 2024-02-01 00:27:57
+// run this api server with
+// console]# node index.js
+
+import http from "http";
+import fs from "fs";
 
 async function chunk(req, res) {
-  // 5번 쪼게서 응답할 것이다.
+  // response with 5 chunks..
   const iterateCount = 5;
-  // 헤더 응답.
+  // header reply
   res.writeHead(200, {
     "content-type": "text/plain",
     "content-length": iterateCount * 8,
   });
-  // 1초씩 지연하면서 청크 응답.
+  // chunks with 1sec delay
   for await (const i of Array(iterateCount).keys()) {
     res.write(`chunk ${i}.`);
     await new Promise((res) => setTimeout(res, 1000));
     console.log(`chunk ${i}. 전달함`);
   }
-  // 응답 종료.
+  // end of replies..
   res.end();
 }
 

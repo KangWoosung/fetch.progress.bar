@@ -1,35 +1,24 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+/* 2024-01-07 09:32:27
+
+구현되어야 할 것들...
+1. 파일 다운로드 버튼과 버튼 클릭 액셔너
+2. 파일 다운로드 취소 버튼과 클릭 액셔너
+3. 파일 업로드 버튼과 버튼 클릭 액셔너
+4. fetch progress status bar with percentage
+
+*/
+import "./css/reset.css";
+import "./css/app.css";
+import Ver01 from "./versions/Ver01";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="wrapper">
+      <div className="innerDiv">
+        <Ver01 />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
