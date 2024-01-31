@@ -2,73 +2,85 @@
 
 fetch progress state:
 -Download: response.body
--Cancel download: AbortController.signal 
--Upload: xhr
 
 
 */
 
-import React from "react";
+import { useContext } from "react";
+import { FetchRateContext } from "../Ver01";
 
-const Download = () => {
-  const downloadAction = () => {
-    console.log("downloadAction");
+const Download: React.FC = () => {
+  const {
+    fetchServer,
+    progressRate,
+    setProgressRate,
+    setFetchCompleted,
+    setContentLengthError,
+    controller,
+  } = useContext(FetchRateContext);
+  const chunks: Uint8Array[] = [];
+  let receivedLength = 0;
+
+  controller.signal.addEventListener("abort", () => {
+    console.log("AbortController: aborted");
+  });
+
+  const downloadAction = async () => {
+    setFetchCompleted(false);
+    setProgressRate(0);
+    const response = await fetch(fetchServer, {
+      signal: controller.signal,
+    });
+    console.log(response);
+    // const totalLength = response.headers.get("Content-Length");
+
+    const totalLength = parseInt(
+      response.headers.get("Content-Length") || "1",
+      10
+    );
+    console.log(totalLength);
+    if (totalLength <= 1) setContentLengthError(true);
+    else {
+      setContentLengthError(false);
+
+      // get stream with getReader()
+      // const reader = response.body.getReader();
+      // 복사된 ReadableStream을 사용
+      const clonedResponse = response.clone();
+
+      // const data = await response.json();
+      // console.log(data);
+
+      // return error if response.body is null
+      if (clonedResponse.body === null)
+        return console.log("response.body is null");
+      const reader = clonedResponse.body.getReader();
+
+      while (true as const) {
+        const { done, value } = await reader.read();
+        if (done) {
+          setTimeout(() => {
+            setFetchCompleted(true);
+          }, 1000);
+          break;
+        }
+        chunks.push(value as Uint8Array);
+        receivedLength += value.length;
+        const fetchProgressRate =
+          (receivedLength / (totalLength as number)) * 100;
+        setProgressRate(fetchProgressRate);
+        console.log(`${receivedLength}/${totalLength}바이트 다운로드`, value);
+      }
+    }
   };
   return (
     <>
       <h3>Chunk Download</h3>
       <div>Download</div>
       <button onClick={downloadAction}>Download</button>
+      <div>{progressRate}</div>
     </>
   );
 };
 
 export default Download;
-
-/*
-const bookMarkData = {
-  id: 1,
-  uuid: uuid(),
-  title: "title",
-  url: "url",
-  tags: ["tag1", "tag2"],
-  category: category_uuid,
-  subTab: subTab_uuid,
-  seqNumber: 1,
-  createdAt: "2021-01-01",
-  updatedAt: "2021-01-01",
-  prevTitle: "prevTitle",
-  isFavorite: false,
-  isArchive: false,
-  isDeleted: false,
-  prevSeqNumber: 1,
-};
-
-const categories = [
-  {
-    id: 1,
-    uuid: uuid(),
-    cathegory: "category",
-    sequenceNumber: 1,
-    isSelected: false,
-    createdAt: "2021-01-01",
-    updatedAt: "2021-01-01",
-    prevCategory: "prevCathegory",
-    prevSeqNumber: 1,
-  }
-];
-
-const subTabs = [
-  {
-    id: 1,
-    uuid: uuid(),
-    subTabName: "subTabName",
-    sequenceNumber: 1,
-    isSelected: false,
-    createdAt: "2021-01-01",
-    updatedAt: "2021-01-01",
-    prevSubTabName: "prevSubTabName",
-    prevSeqNumber: 1,
-  },
-];
-*/

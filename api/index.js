@@ -4,6 +4,7 @@
 
 import http from "http";
 import fs from "fs";
+// import cors from "cors";
 
 async function chunk(req, res) {
   // response with 5 chunks..
@@ -17,7 +18,6 @@ async function chunk(req, res) {
   for await (const i of Array(iterateCount).keys()) {
     res.write(`chunk ${i}.`);
     await new Promise((res) => setTimeout(res, 1000));
-    console.log(`chunk ${i}. 전달함`);
   }
   // end of replies..
   res.end();
@@ -49,6 +49,11 @@ const server = http.createServer((req, res) => {
   console.log(req.url);
 
   const { pathname } = new URL(req.url, `http://${req.headers.host}`);
+
+  // CORS 설정 추가
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (pathname === "/chunk") return chunk(req, res);
   if (pathname === "/upload") return upload(req, res);
