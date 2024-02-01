@@ -1,17 +1,16 @@
 
 # Usage
-```js
 Need to run local API server at port 3000:
+```js
 console]# node /api/index.js
 ```
 
 # What is incomplete
-```js
 Progress bar occurs too many renders not just Progress component itself but also its siblings and wrapper as well.
 
-Fetch retry after an abort is disabled for now. It's challenging due to the readonly nature of controller.signal.
+Fetch retry after an abort is disabled for now. It's a challenging task due to the readonly nature of controller.signal.
 To implement the retry, a new controller instance needs to be created and made available to all components. This unexpectedly adds complexity for now.
-```
+
 
 
 
