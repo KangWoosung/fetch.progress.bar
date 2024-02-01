@@ -26,10 +26,14 @@ type ContextProps = {
   setProgressRate: Dispatch<SetStateAction<number>>;
   fetchCompleted: boolean;
   setFetchCompleted: Dispatch<SetStateAction<boolean>>;
+  fetchAborted: boolean;
+  setFetchAborted: Dispatch<SetStateAction<boolean>>;
   contentLengthError: boolean;
   setContentLengthError: Dispatch<SetStateAction<boolean>>;
-  controller: AbortController;
+  controller: AbortController | undefined;
 };
+
+const controller = new AbortController();
 
 export const FetchRateContext = createContext<ContextProps>({
   fetchServer: "http://localhost:3000/chunk",
@@ -38,16 +42,18 @@ export const FetchRateContext = createContext<ContextProps>({
   setProgressRate: () => {},
   fetchCompleted: false,
   setFetchCompleted: () => {},
+  fetchAborted: false,
+  setFetchAborted: () => {},
   contentLengthError: false,
   setContentLengthError: () => {},
-  controller: new AbortController(),
+  controller: controller,
 });
 
 const Ver01 = () => {
-  const controller = new AbortController();
   const [fetchServer, setFetchServer] = useState("");
   const [progressRate, setProgressRate] = useState(0);
   const [fetchCompleted, setFetchCompleted] = useState(false);
+  const [fetchAborted, setFetchAborted] = useState(false);
   const [contentLengthError, setContentLengthError] = useState(false);
 
   controller.signal.addEventListener("abort", () => {
@@ -70,6 +76,8 @@ const Ver01 = () => {
           setProgressRate,
           fetchCompleted,
           setFetchCompleted,
+          fetchAborted,
+          setFetchAborted,
           contentLengthError,
           setContentLengthError,
           controller,

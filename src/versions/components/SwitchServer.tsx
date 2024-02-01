@@ -21,7 +21,7 @@ const SwitchServer = () => {
   };
   return (
     <>
-      <div>SwitchServer</div>
+      <h3>SwitchServer</h3>
       <form className="switch-server-form">
         {fetchServers.map((server, index) => {
           return (

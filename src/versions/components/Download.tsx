@@ -15,21 +15,25 @@ const Download: React.FC = () => {
     progressRate,
     setProgressRate,
     setFetchCompleted,
+    fetchAborted,
+    setFetchAborted,
     setContentLengthError,
     controller,
   } = useContext(FetchRateContext);
   const chunks: Uint8Array[] = [];
   let receivedLength = 0;
 
-  controller.signal.addEventListener("abort", () => {
-    console.log("AbortController: aborted");
+  controller?.signal.addEventListener("abort", () => {
+    console.log("AbortController: aborted..");
   });
 
   const downloadAction = async () => {
+    console.log("Download: fetching...", controller?.signal);
     setFetchCompleted(false);
+    setFetchAborted(false);
     setProgressRate(0);
     const response = await fetch(fetchServer, {
-      signal: controller.signal,
+      signal: controller?.signal,
     });
     console.log(response);
     // const totalLength = response.headers.get("Content-Length");
@@ -77,7 +81,9 @@ const Download: React.FC = () => {
     <>
       <h3>Chunk Download</h3>
       <div>Download</div>
-      <button onClick={downloadAction}>Download</button>
+      <button onClick={downloadAction} disabled={fetchAborted}>
+        Download
+      </button>
       <div>{progressRate}</div>
     </>
   );

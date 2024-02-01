@@ -8,7 +8,7 @@ import { useContext } from "react";
 import { FetchRateContext } from "../Ver01";
 
 export default function ProgressBar() {
-  const { progressRate, fetchCompleted, contentLengthError } =
+  const { progressRate, fetchCompleted, fetchAborted, contentLengthError } =
     useContext(FetchRateContext);
   let displayProgressRate = 0;
 
@@ -29,6 +29,9 @@ export default function ProgressBar() {
             className="progress-bar"
             style={{ width: `${displayProgressRate}%` }}
           ></div>
+        )}
+        {fetchAborted && (
+          <div className="progress-bar-error">Fetch aborted!!</div>
         )}
         {contentLengthError && (
           <div className="progress-bar-error">
