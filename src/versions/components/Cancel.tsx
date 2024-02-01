@@ -10,11 +10,14 @@ export default function Cancel() {
   const { progressRate, controller, setFetchAborted } =
     useContext(FetchRateContext);
 
-  const abortDownload = () => {
-    console.log("AbortController: aborting...");
-    controller && controller.abort();
-    setFetchAborted(true);
-    console.log("signal:", controller?.signal);
+  const abortDownload = async () => {
+    try {
+      controller && controller.abort();
+      setFetchAborted(true);
+      console.log("signal:", controller?.signal);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
