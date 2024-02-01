@@ -9,7 +9,7 @@ console]# node /api/index.js
 Progress bar occurs too many renders not just Progress component itself but also its siblings and wrapper as well.
 
 Fetch retry after an abort is disabled for now. It's a challenging task due to the readonly nature of controller.signal.
-To implement the retry, a new controller instance needs to be created and made available to all components. This unexpectedly adds complexity for now.
+To implement the retry, a new controller instance needs to be created and made available to all components simultaneously. This unexpectedly adds complexity for now.
 
 
 
