@@ -1,7 +1,11 @@
 /*  2024-02-01 19:12:42
 
 Why using XMLHttpRequest?
- = fetch does not support upload status
+ = fetch does not support upload bytes status
+
+2024-02-01 21:11:34
+This component makes too many renders of whole page.
+Leave it for future refactoring.
 
 */
 
@@ -40,7 +44,7 @@ const Upload = () => {
     let xhrProgress = 0;
     const handleProgress = (event: ProgressEvent) => {
       if (event.lengthComputable) {
-        xhrProgress = (event.loaded / event.total) * 100;
+        xhrProgress = Math.floor((event.loaded * 100) / event.total);
         setProgressRate(xhrProgress);
         console.log(xhrProgress);
       }
@@ -51,7 +55,7 @@ const Upload = () => {
     });
     xhr.upload.addEventListener("loadend", () => {
       if (xhrProgress === 100) {
-        setProgressRate(100);
+        // setProgressRate(100);
         setFetchCompleted(true);
       }
     });
