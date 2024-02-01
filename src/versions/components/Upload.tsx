@@ -1,32 +1,68 @@
-import React from "react";
+/*  2024-02-01 19:12:42
+
+Why using XMLHttpRequest?
+ = fetch does not support upload status
+
+*/
+
+import React, { RefObject, useContext, useRef } from "react";
+import { FetchRateContext } from "../Ver01";
 
 const Upload = () => {
-  const uploadFile = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formElement = event.currentTarget;
-    if (formElement?.elements.length === 0) {
-      console.log("No file selected");
-      return;
-    }
-    const fileInputElement = formElement.elements[0] as HTMLInputElement;
-    const file = fileInputElement.files?.[0];
+  const uploadFileRef: RefObject<HTMLInputElement> = useRef(null);
+  const {
+    fetchServer,
+    setProgressRate,
+    setFetchAborted,
+    setFetchCompleted,
+    xhr,
+  } = useContext(FetchRateContext);
+  let fileToUpload: File | null = null;
 
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const contents = event.target?.result;
-        console.log(contents);
-      };
-      reader.readAsText(file);
-    } else {
-      console.log("No file selected");
-    }
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target?.files === undefined) return false;
+    else if (e.target.files?.length === 0) return false;
+    else if (e.target.files) fileToUpload = e.target.files[0];
+  };
+
+  const uploadFileAction = (event: React.FormEvent<HTMLFormElement>) => {
+    console.log("form submitted");
+    event.preventDefault();
+    setFetchCompleted(false);
+    setFetchAborted(false);
+    setProgressRate(0);
+    const formData = new FormData();
+    // const uploadFile = document.querySelector('input[type=file]')?.files[0];
+    // const uploadFile = uploadFileRef.current
+    if (fileToUpload === null) return false;
+    formData.append("file", fileToUpload);
+
+    let xhrProgress = 0;
+    const handleProgress = (event: ProgressEvent) => {
+      if (event.lengthComputable) {
+        xhrProgress = (event.loaded / event.total) * 100;
+        setProgressRate(xhrProgress);
+        console.log(xhrProgress);
+      }
+    };
+    xhr.upload.addEventListener("progress", handleProgress);
+    xhr.upload.addEventListener("abort", () => {
+      setFetchCompleted(false);
+    });
+    xhr.upload.addEventListener("loadend", () => {
+      if (xhrProgress === 100) {
+        setProgressRate(100);
+        setFetchCompleted(true);
+      }
+    });
+    xhr.open("POST", fetchServer[0]);
+    xhr.send(formData);
   };
   return (
     <>
       <div>Upload</div>
-      <form onSubmit={uploadFile}>
-        <input type="file" />
+      <form onSubmit={uploadFileAction}>
+        <input type="file" ref={uploadFileRef} onChange={handleFileChange} />
         <button type="submit">Upload</button>
       </form>
     </>

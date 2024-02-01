@@ -7,14 +7,15 @@ import { useContext } from "react";
 import { FetchRateContext } from "../Ver01";
 
 export default function Cancel() {
-  const { progressRate, controller, setFetchAborted } =
+  const { progressRate, controller, setFetchAborted, xhr } =
     useContext(FetchRateContext);
 
-  const abortDownload = async () => {
+  const abortFetchProcess = async () => {
     try {
       controller && controller.abort();
       setFetchAborted(true);
       console.log("signal:", controller?.signal);
+      xhr.abort();
     } catch (err) {
       console.error(err);
     }
@@ -24,10 +25,10 @@ export default function Cancel() {
     <>
       <div>Cancel</div>
       <button
-        onClick={abortDownload}
+        onClick={abortFetchProcess}
         disabled={progressRate > 0 && progressRate < 100 ? false : true}
       >
-        Cancel Download
+        Cancel Fetch Action
       </button>
     </>
   );

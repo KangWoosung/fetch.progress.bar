@@ -31,9 +31,11 @@ type ContextProps = {
   contentLengthError: boolean;
   setContentLengthError: Dispatch<SetStateAction<boolean>>;
   controller: AbortController | undefined;
+  xhr: XMLHttpRequest;
 };
 
 const controller = new AbortController();
+const xhr = new XMLHttpRequest();
 
 export const FetchRateContext = createContext<ContextProps>({
   fetchServer: "http://localhost:3000/chunk",
@@ -47,6 +49,7 @@ export const FetchRateContext = createContext<ContextProps>({
   contentLengthError: false,
   setContentLengthError: () => {},
   controller: controller,
+  xhr: xhr,
 });
 
 const Ver01 = () => {
@@ -81,6 +84,7 @@ const Ver01 = () => {
           contentLengthError,
           setContentLengthError,
           controller,
+          xhr,
         }}
       >
         <SwitchServer />
